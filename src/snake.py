@@ -42,10 +42,8 @@ class Snake:
 
         return False
 
-
-    # ------- CORE -------- #
     def __move(self):
-        # TODO: SEPERATE ANIMATION AND MOVEMENT AND MAKE SMOOTH ANIMATION
+        # TODO: MAKE SMOOTH ANIMATION
 
         head = self.body[-1]
         head_x, head_y = head.pos
@@ -85,158 +83,92 @@ class Snake:
             body.pos = after
             after = current
 
-        # ++ ---------------------------------------------------- ++ #
-
     def __apply_texture(self):
-        # -- apply texture -- #
-        for i in range(len(self.body) - 2, 0, -1):
-            prev_segment = self.body[i - 1]
-            curr_segment = self.body[i]
-            next_segment = self.body[i + 1]
+        head_x, head_y = self.head_pos
 
-            if prev_segment.type == 'tail' and next_segment.type == 'head':
+        for body in sorted(self.body[:-1], key=lambda b: b.pos[1]):
+            if body.pos[0] == head_x:
+                body.direction = 'down' if body.type == 'tail' else 'vertical'
 
-                if prev_segment.direction == 'left' and curr_segment.direction == 'horizontal' and next_segment.direction == 'right':
-                    curr_segment.direction = 'horizontal'
+        prev_body = None
+        for i, segment in enumerate(self.body):
+            if segment.pos == body.pos:
+                # body parts are reversed order in array head is the last index
+                prev_body = self.body[i - 1]
 
-                elif prev_segment.direction == 'left' and curr_segment.direction == 'horizontal' and next_segment.direction == 'down':
-                    curr_segment.direction = 'bottom_left'
+        # just in case :)
+        if not prev_body:
+            raise Exception("No prev_body found")
 
-                elif prev_segment.direction == 'left' and curr_segment.direction == 'horizontal' and next_segment.direction == 'up':
-                    curr_segment.direction = 'top_left'
+        body_x, body_y = body.pos
+        prev_x, prev_y = prev_body.pos
 
-                elif prev_segment.direction == 'left' and curr_segment.direction == 'bottom_left' and next_segment.direction == 'down':
-                    prev_segment.direction = 'up'
-                    curr_segment.direction = 'vertical'
+        if self.head.direction == 'up':
 
-                elif prev_segment.direction == 'left' and curr_segment.direction == 'bottom_left' and next_segment.direction == 'right':
-                    prev_segment.direction = 'up'
-                    curr_segment.direction = 'top_right'
+            # the last body is always had to be curvy
+            if body.type == 'body':
 
-                elif prev_segment.direction == 'left' and curr_segment.direction == 'bottom_left' and next_segment.direction == 'left':
-                    prev_segment.direction = 'up'
-                    curr_segment.direction = 'top_left'
-
-                elif prev_segment.direction == 'left' and curr_segment.direction == 'top_left' and next_segment.direction == 'up':
-                    curr_segment.direction = 'vertical'
-                    prev_segment.direction = 'down'
-
-                elif prev_segment.direction == 'left' and curr_segment.direction == 'top_left' and next_segment.direction == 'right':
-                    curr_segment.direction = 'bottom_right'
-                    prev_segment.direction = 'down'
-
-                elif prev_segment.direction == 'left' and curr_segment.direction == 'top_left' and next_segment.direction == 'left':
-                    curr_segment.direction = 'bottom_left'
-                    prev_segment.direction = 'down'
-
-                elif prev_segment.direction == 'up' and curr_segment.direction == 'vertical' and next_segment.direction == 'down':
-                    curr_segment.direction = 'vertical'
-
-                elif prev_segment.direction == 'up' and curr_segment.direction == 'vertical' and next_segment.direction == 'left':
-                    curr_segment.direction = 'top_left'
-
-                elif prev_segment.direction == 'up' and curr_segment.direction == 'vertical' and next_segment.direction == 'right':
-                    curr_segment.direction = 'top_right'
-
-                elif prev_segment.direction == 'up' and curr_segment.direction == 'top_left' and next_segment.direction == 'left':
-                    curr_segment.direction = 'horizontal'
-                    prev_segment.direction = 'right'
-
-                elif prev_segment.direction == 'up' and curr_segment.direction == 'top_left' and next_segment.direction == 'down':
-                    curr_segment.direction = 'bottom_right'
-                    prev_segment.direction = 'right'
-
-                elif prev_segment.direction == 'up' and curr_segment.direction == 'top_left' and next_segment.direction == 'up':
-                    curr_segment.direction = 'top_right'
-                    prev_segment.direction = 'right'
-
-                elif prev_segment.direction == 'up' and curr_segment.direction == 'top_right' and next_segment.direction == 'right':
-                    curr_segment.direction = 'horizontal'
-                    prev_segment.direction = 'left'
-
-                elif prev_segment.direction == 'up' and curr_segment.direction == 'top_right' and next_segment.direction == 'up':
-                    curr_segment.direction = 'top_left'
-                    prev_segment.direction = 'left'
-
-                elif prev_segment.direction == 'up' and curr_segment.direction == 'top_right' and next_segment.direction == 'down':
-                    curr_segment.direction = 'bottom_left'
-                    prev_segment.direction = 'left'
-
-                elif prev_segment.direction == 'right' and curr_segment.direction == 'horizontal' and next_segment.direction == 'left':
-                    curr_segment.direction = 'horizontal'
-
-                elif prev_segment.direction == 'right' and curr_segment.direction == 'horizontal' and next_segment.direction == 'up':
-                    curr_segment.direction = 'top_right'
-
-                elif prev_segment.direction == 'right' and curr_segment.direction == 'horizontal' and next_segment.direction == 'down':
-                    curr_segment.direction = 'bottom_right'
-
-                elif prev_segment.direction == 'right' and curr_segment.direction == 'top_right' and next_segment.direction == 'up':
-                    curr_segment.direction = 'vertical'
-                    prev_segment.direction = 'down'
-
-                elif prev_segment.direction == 'right' and curr_segment.direction == 'top_right' and next_segment.direction == 'right':
-                    curr_segment.direction = 'bottom_right'
-                    prev_segment.direction = 'down'
-
-                elif prev_segment.direction == 'right' and curr_segment.direction == 'top_right' and next_segment.direction == 'left':
-                    curr_segment.direction = 'bottom_left'
-                    prev_segment.direction = 'down'
-
-                elif prev_segment.direction == 'right' and curr_segment.direction == 'bottom_right' and next_segment.direction == 'down':
-                    curr_segment.direction = 'vertical'
-                    prev_segment.direction = 'up'
-
-                elif prev_segment.direction == 'right' and curr_segment.direction == 'bottom_right' and next_segment.direction == 'left':
-                    curr_segment.direction = 'top_left'
-                    prev_segment.direction = 'up'
-
-                elif prev_segment.direction == 'right' and curr_segment.direction == 'bottom_right' and next_segment.direction == 'right':
-                    curr_segment.direction = 'top_right'
-                    prev_segment.direction = 'up'
-
-                elif prev_segment.direction == 'down' and curr_segment.direction == 'bottom_right' and next_segment.direction == 'right':
-                    curr_segment.direction = 'horizontal'
-                    prev_segment.direction = 'left'
-
-                elif prev_segment.direction == 'down' and curr_segment.direction == 'bottom_right' and next_segment.direction == 'up':
-                    curr_segment.direction = 'top_left'
-                    prev_segment.direction = 'left'
-
-                elif prev_segment.direction == 'down' and curr_segment.direction == 'bottom_right' and next_segment.direction == 'down':
-                    curr_segment.direction = 'bottom_left'
-                    prev_segment.direction = 'left'
-
-                elif prev_segment.direction == 'down' and curr_segment.direction == 'bottom_left' and next_segment.direction == 'left':
-                    curr_segment.direction = 'horizontal'
-                    prev_segment.direction = 'right'
-
-                elif prev_segment.direction == 'down' and curr_segment.direction == 'bottom_left' and next_segment.direction == 'up':
-                    curr_segment.direction = 'top_right'
-                    prev_segment.direction = 'right'
-
-                elif prev_segment.direction == 'down' and curr_segment.direction == 'bottom_left' and next_segment.direction == 'down':
-                    curr_segment.direction = 'bottom_right'
-                    prev_segment.direction = 'right'
-
-                elif prev_segment.direction == 'down' and curr_segment.direction == 'vertical' and next_segment.direction == 'up':
-                    curr_segment.direction = 'vertical'
-
-                elif prev_segment.direction == 'down' and curr_segment.direction == 'vertical' and next_segment.direction == 'right':
-                    curr_segment.direction = 'bottom_right'
-                    prev_segment.direction = 'down'
-
-                elif prev_segment.direction == 'down' and curr_segment.direction == 'vertical' and next_segment.direction == 'left':
-                    curr_segment.direction = 'bottom_left'
-                    prev_segment.direction = 'down'
+                if body_x < prev_x and head_y < prev_y:
+                    body.direction = 'top_right'
 
                 else:
-                    ...
-                    # TODO BUG HERE
-                    print("ERROR")
-                    print(prev_segment.direction, curr_segment.direction, next_segment.direction)
+                    body.direction = 'top_left'
 
-        # ++ ---------------------------------------------------- ++ #
+        elif self.head.direction == 'down':
+
+            for body in sorted(self.body[:-1], key=lambda b: -b.pos[1]):
+
+                if body.pos[0] == head_x:
+
+                    body.direction = 'up' if body.type == 'tail' else 'vertical'
+
+            # the last body is always had to be curve
+            if body.type == 'body':
+
+                if body_x < prev_x and head_y > prev_y:
+                    print("A")
+                    body.direction = 'bottom_right'
+
+                else:
+                    print("C")
+                    body.direction = 'bottom_left'
+
+        elif self.head.direction == 'right':
+
+            for body in sorted(self.body[:-1], key=lambda b: -b.pos[0]):
+                if body.pos[1] == head_y:
+                    body.direction = 'left' if body.type == 'tail' else 'horizontal'
+            # the last body is always had to be curve
+            if body.type == 'body':
+
+                if body.pos[0] > head_x:
+                    body.direction = 'bottom_left'
+
+                elif body.pos[0] < head_x:
+                    body.direction = 'bottom_right'
+
+                else:
+                    body.direction = 'horizontal'
+
+        elif self.head.direction == 'left':
+
+            for body in sorted(self.body[:-1], key=lambda b: b.pos[0]):
+
+                if body.pos[1] == head_y:
+
+                    body.direction = 'right' if body.type == 'tail' else 'horizontal'
+
+            if body.type == 'body':
+
+                if body.pos[0] > head_x:
+                    body.direction = 'top_right'
+
+                elif body.pos[0] < head_x:
+                    body.direction = 'top_left'
+
+
+
+
 
     def game_over(self) -> bool:
         if self.__check_collision_with_body() or self.__check_borders():
@@ -281,8 +213,11 @@ class Snake:
             elif e.key == pg.K_SPACE:
                 self.__grow()
 
-        if e.type == Snake.E_SNAKE_ANIMATION:
-            self.animation_lock = False
+            elif e.key == pg.K_z:
+                self.animation_lock = False
+
+        # if e.type == Snake.E_SNAKE_ANIMATION:
+        #     self.animation_lock = False
 
     def draw(self):
         for body in self.body:
