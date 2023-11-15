@@ -9,7 +9,7 @@ class Game:
         pg.init()
 
         pg.display.set_caption(caption)
-        self.scene = pg.display.set_mode((window_x, window_y))
+        self.scene = pg.display.set_mode((window_x, window_y), pg.FULLSCREEN)
         self.clock = pg.time.Clock()
 
         # GAME OBJECTS

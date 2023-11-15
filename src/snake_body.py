@@ -55,3 +55,10 @@ class SnakeBody:
     @pos.setter
     def pos(self, value):
         self.rect.topleft = value
+
+
+    def __str__(self):
+        return f'{self.type} - {self.direction}'
+
+    def __repr__(self):
+        return f'{self.type} - {self.direction}'
